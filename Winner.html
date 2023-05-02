@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">      
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+        <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+  />
+        <style>
+@import url("https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap");
+* {
+    font-family: 'Gowun Dodum', sans-serif;
+    font-size:18px;
+  transition: all 0.5s ease;
+}
+div{
+   margin:1px; 
+}
+body {
+  background: #dfdfdf;
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  padding: 0 16px;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+}
+
+form {
+  width: 400px;
+  display: flex;
+  flex-flow: column wrap;
+  align-items: center;
+  justify-content: center;
+}
+form div, form label, form input, form textarea {
+  width: 100%;
+}
+
+.field:focus-within label {
+  color: #000;
+  letter-spacing: 2px;
+}
+
+input, textarea {
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0 8px 6px -6px #555;
+}
+input:focus, textarea:focus {
+  background: white;
+  box-shadow: none;
+}
+
+textarea {
+  resize: none;
+}
+textarea::-webkit-scrollbar {
+  width: 0;
+}
+
+button {
+  background: #2f4ad0;
+  margin: 10px;
+  padding: 8px 16px;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 8px 6px -6px #555;
+}
+button:hover {
+  letter-spacing: 2px;
+  box-shadow: none;
+}
+@media (max-width: 425px) {
+  form {
+    width: 100%;
+  }
+}
+.ani-boxes > div {
+  background: #f2f2f2;
+  color: #fff;
+    border-radius: 200px;
+    padding: 5px;
+    margin: 0 0 5px;
+    width: 100px;
+} 
+img {
+    margin-right: 80px;
+}
+        </style>
+    </head>
+    <body>    
+        <div class="container">
+            <form>    
+            <div><i class="fas fa-users"></i> 참여자 : <span id="entryCnt" style="background-color:yellow;"></span></div>
+            <div><textarea cols="10" rows="5" id="entryList"></textarea></div>
+            <div><i class="fas fa-coins"></i> 풀공헌도 : <span id="donationCnt" style="background-color:yellow;"></span></div>
+            <div><textarea cols="10" rows="5" id="donationList"></textarea></div>
+            <div><i class="fas fa-users"></i> 희망자 : <span id="wisherCnt" style="background-color:yellow;"></span></div>
+            <div><textarea cols="10" rows="5" id="wisherList"></textarea></div>
+            
+            <div>희망하였으나, 불참인 분들</div>
+            <div><i class="fas fa-hand-point-right"></i><span id="no_entryList" style="background-color:yellow;"></span></div>
+            
+            <div>희망하였으나, 풀공헌이 아닌 분들</div>
+            <div><i class="fas fa-hand-point-right"></i><span id="no_donationList" style="background-color:yellow;"></span></div>
+                        
+            <div>당첨상품</div>
+            <div><input type="text" id="prizeName"></div>
+            <div>당첨상품 갯수</div>
+            <div><input type="number" id="prizeCnt"></div>
+            <div><button type="button" id="executeBtn">추첨 Go</div>            
+            <div>당첨자는?</div>
+            <div>
+                <i class="fas fa-hand-point-right"></i>
+                <!-- <span id="winnerList"></span> -->
+                <div class="ani-boxes" id="winnerList">
+                </div>
+            </div>
+            <div>당첨 축하드립니당!!<br>* 마감 5분전 미입찰시 선착순 응모입니다!</div>
+            </form>
+            </div>
+
+        <script>
+            window.onload = function () {
+    //count text
+    const entryCnt = document.getElementById("entryCnt"); //참여자 인원
+    const donationCnt = document.getElementById("donationCnt"); //풀공헌자 인원
+    const wisherCnt = document.getElementById("wisherCnt"); //희망자 인원
+
+    //textarea
+    const entryTextarea = document.getElementById("entryList"); //참여자
+    const donationTextarea = document.getElementById("donationList"); //풀공헌
+    const wisherTextarea = document.getElementById("wisherList"); //희망자
+
+    //betton
+    const exBtn = document.getElementById("executeBtn"); //사다리 추첨
+
+    //참여자 확인
+    entryTextarea.addEventListener("keyup", function (event) {
+        if (window.event.keyCode == 32) {
+            return false;
+        }
+        checkThis(1);
+        showCount();        
+    });
+    //풀공헌자 확인
+    donationTextarea.addEventListener("keyup", function (event) {
+        if (window.event.keyCode == 32) {
+            return false;
+        }
+        checkThis(2);
+        showCount();        
+    });
+    //희망자 확인
+    wisherTextarea.addEventListener("keyup", function (event) {
+        if (window.event.keyCode == 32) {
+            return false;
+        }
+        checkThis(1);
+        checkThis(2);
+        showCount();        
+    });
+    
+    function checkThis(num)
+    {
+        const targetTextarea = num == 1 ? entryTextarea : donationTextarea;        
+        const targetList = targetTextarea.value.split("\n");
+        const wisherList = wisherTextarea.value.split("\n");
+        let no_targetList = [];
+        wisherList.forEach(function(wisher){
+            //console.log("wisher : " + wisher);
+            //console.log("no_entry? " + !targetList.includes(wisher));
+            if(!targetList.includes(wisher))
+                no_targetList.push(wisher);
+        });
+        const noListArea = num == 1 ? "no_entryList" : "no_donationList";
+        document.getElementById(noListArea).innerHTML = no_targetList.toString();
+    }
+    //인원수 보여주기
+    function showCount()
+    {
+        entryCnt.innerHTML = getCount(entryTextarea);
+        donationCnt.innerHTML = getCount(donationTextarea);
+        wisherCnt.innerHTML = getCount(wisherTextarea);
+    }
+    function getCount(targetTextarea)
+    {
+        var count = 0;
+        var tempArray = targetTextarea.value.split("\n");
+        tempArray.forEach(function(name){
+            if(name.trim() != "")
+                count++;
+        });
+        return count;
+    }
+
+    //추첨 실행
+    exBtn.addEventListener("click", function () {
+        let oriWisherList = document.getElementById("wisherList").value.split("\n");                    
+        const no_entryList = document.getElementById("no_entryList").innerHTML.split(",");
+
+        oriWisherList = removeSpace(oriWisherList); //space 제거
+        oriWisherList = removeDuplicateItem(oriWisherList); //중복값 제거
+        oriWisherList = removeMember(oriWisherList); //조건 미달자 제거 
+        let oriWisherCnt = oriWisherList.length;
+
+        console.log("final wisherList : " + oriWisherList.toString());
+        let wisherList = JSON.parse(JSON.stringify(oriWisherList));
+        let wisherCnt = wisherList.length;
+        let addPrizeCnt = 0;
+        let prizeCnt = document.getElementById("prizeCnt").value;
+        let leftPrizeCnt = document.getElementById("prizeCnt").value;
+        let winnerList = [];
+
+        //희망자수보다 상품이 더 많을 경우
+        if(oriWisherCnt < prizeCnt)
+        { 
+            addPrizeCnt = Math.floor(prizeCnt/oriWisherCnt);
+            leftPrizeCnt = prizeCnt%oriWisherCnt;
+        }    
+        let tempLeftCnt = leftPrizeCnt;
+        while(tempLeftCnt > 0)
+        {
+            var randomIdx = Math.floor(Math.random() * (wisherList.length));
+            console.log('randomIdx :' + randomIdx);
+            let wisher = wisherList[randomIdx];
+            console.log('wisher : ' + wisher);
+            if(!winnerList.includes(wisher))
+            {    
+                winnerList.push(wisher);
+                tempLeftCnt--;
+            }
+        }
+        let result = document.getElementById("prizeName").value + '<br>';
+        let boxes = [];
+        let tempBoxItem = '';
+        if(addPrizeCnt > 0)
+        {   
+            let add = 0;
+            for(var cnt= 1; cnt <= oriWisherCnt; cnt++)
+            {
+                //일정 갯수만큼 가지기
+                const prizeNumArr = Array.from({length:addPrizeCnt}, (v,i)=>(i+1) + add); 
+                tempBoxItem = prizeNumArr.reduce(
+                    (accumulator, currentValue) => accumulator + ', ' + currentValue
+                );
+                add += prizeNumArr.length;
+
+                //추가 당첨된 경우 하나 더!
+                if(winnerList.includes(oriWisherList[cnt-1]))
+                {
+                    tempBoxItem += ', ' + (prizeNumArr[prizeNumArr.length-1] + 1);
+                    add++;
+                }
+                tempBoxItem += '. ' + oriWisherList[cnt-1];
+                boxes.push(tempBoxItem);
+            }
+        }
+        else
+        {
+            for(var idx= 0; idx < leftPrizeCnt; idx++)
+            {
+                tempBoxItem = (idx+1) + '. ' + winnerList[idx];
+                boxes.push(tempBoxItem);
+            }
+        }
+        document.getElementById("winnerList").innerHTML = result; 
+        entranceAnimation(boxes);
+    });
+
+    //space 제거
+    function removeSpace(list)
+    {
+        let arr = [];
+        list.forEach((element) => {
+            arr.push(element.trim());
+        });
+        return arr;
+    }
+    //조건 미달자 제거 
+    function removeMember(wisherList)
+    {
+        const no_entryList = document.getElementById("no_entryList").innerHTML.split(",");        
+        no_entryList.forEach(function(no_entry){
+            //console.log("no_entry : " + no_entry);
+            if(wisherList.includes(no_entry))
+            {
+                const idx = wisherList.indexOf(no_entry);
+                wisherList.splice(idx, 1);
+            }
+        });
+        
+        const no_donationList = document.getElementById("no_donationList").innerHTML;
+        if(no_donationList != '')
+        {
+            no_donationList.split(",").forEach(function(no_entry){
+                //console.log("no_entry : " + no_entry);
+                if(wisherList.includes(no_entry))
+                {
+                    const idx = wisherList.indexOf(no_entry);
+                    wisherList.splice(idx, 1);
+                }
+            });
+        }
+        return wisherList;
+    }
+    //중복값 제거
+    function removeDuplicateItem(dupArr)
+    {
+        let uniqueArr = [];
+        dupArr.forEach((element) => {
+            if (!uniqueArr.includes(element)) {
+                uniqueArr.push(element);
+            }
+        });
+        return uniqueArr;
+    }
+    function entranceAnimation(arr)
+    {
+        var colors = ["#E41A1C", "#FFE124", "#4DAF4A", "#FF7F00", "#984EA3", "#F781BF", "#34DAD8", "#F00979", "#A65628", "#999999" , "#8461ED", "#EB8159", "#4190EB", "#EBD92A", "#36EBC9", "#EB6131", "#EB108B", "#3FEBC5", "#4EED47", "#333"];
+        let area = document.getElementById("winnerList");
+        for(var i=0;i<arr.length;i++){ 
+            let colorIdx = i%colors.length;
+            let div = document.createElement('div');            
+            div.className = 'animate__animated animate__bounceInRight'; 
+            div.style = 'background:' + colors[colorIdx] + ';';
+            // let img = document.createElement('img');
+            // img.src = "https://mblogthumb-phinf.pstatic.net/MjAxNzEwMzFfMTI0/MDAxNTA5NDEwMTc5Nzc2.lSesGatzO1Jik6cJFJ49XPMlN9vUeCVNDHom1QktxIUg.6uEYd6eMTNqcA-6tLVP4fwNnp7ZGCvPDBR-atmPWnfYg.PNG.cool911016/33.png?type=w800";
+            // img.width = 100;
+            // img.className = 'animate__animated animate__bounceInRight'; 
+            // div.appendChild(img);
+            div.append(arr[i]);                     
+            setTimeout(function () {                 
+                area.appendChild(div);
+            }, 500 * i);            
+        }
+        
+    }
+}
+        </script>   
+     
+    </body>
+</html>
