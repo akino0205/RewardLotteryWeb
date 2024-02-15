@@ -8,4 +8,6 @@ npx http-server
 http://127.0.0.1:8080
 
 위 URL로 접속해서 에러가 사라진 것을 확인합니다.
+http://localhost:8080/Winner.html 에서 확인 가능!
+
 [출처:https://rondeveloper.tistory.com/21]

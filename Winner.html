@@ -380,7 +380,6 @@ input[type="radio"]:checked + .pretty-radio:after { display: block; }
 	methodRadios.forEach((radio) => {
 		radio.addEventListener("change", (e) => {
             setMethod();
-			
 		});
 	});
     //씰룩 or 쌜룩 
@@ -728,6 +727,7 @@ input[type="radio"]:checked + .pretty-radio:after { display: block; }
             donationTextarea.innerHTML = '';
             wisherTextarea.innerHTML = '';
             exceptTextarea.innerHTML = '';
+            executeFinal();
         }
     }
 
