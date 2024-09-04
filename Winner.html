@@ -6,6 +6,8 @@
         <meta property="og:title" content="[제2의나라] 보상추첨기!" />
         <meta property="og:description" content="우리 킹덤 보상을 추첨해보자!" />
         <meta property="og:image" content="https://sgimage.netmarble.com/images/netmarble/enn/20200826/u6xo1598438472519.jpg" />
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script type="text/javascript" src="jquery-barcode.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
         <link
     rel="stylesheet"
@@ -70,7 +72,7 @@ textarea::-webkit-scrollbar {
 }
 
 button {
-  background: #FE8A80;
+  background: #c2554f;
   margin: 10px;
   padding: 8px 16px;
   color: #fff;
@@ -89,8 +91,9 @@ button:hover {
   }
 }
 .ani-boxes > div {
-  background: #f2f2f2;
-  color: #fff;
+  /* background: #f2f2f2; */
+  /* color: #fff; */
+  color: #000;
     border-radius: 200px;
     padding: 5px;
     margin: 0 0 5px;
@@ -132,6 +135,8 @@ img {
                 </div>
             </div>
             <div>당첨 축하드립니당!!<br>* 마감 5분전 미입찰시 선착순 응모입니다!</div>
+
+            <div id="bcTarget" style="margin-top:30px;"></div>
             </form>
             </div>
 
@@ -296,8 +301,16 @@ img {
         }
         document.getElementById("winnerList").innerHTML = result; 
         entranceAnimation(boxes);
+        eventPopupFromNyanya();
     });
 
+    function eventPopupFromNyanya()
+    {
+        //아직도 이걸 써요? 쓴다면 선착순 선물.. 먼저 쓰는 사람꺼..
+        
+        test();
+        
+    }
     //#region 제거
     //space 제거
     function removeSpace(list)
@@ -359,7 +372,7 @@ img {
     
     function entranceAnimation(arr)
     {
-        var colors = ["#E41A1C", "#FFE124", "#4DAF4A", "#FF7F00", "#984EA3", "#F781BF", "#34DAD8", "#F00979", "#A65628", "#999999" , "#8461ED", "#EB8159", "#4190EB", "#EBD92A", "#36EBC9", "#EB6131", "#EB108B", "#3FEBC5", "#4EED47", "#333"];
+        var colors = ["#ABDEE6", "#CBAACB", "#FFFFB5", "#FFCCB6", "#F3B0C3"];
         let area = document.getElementById("winnerList");
         for(var i=0;i<arr.length;i++){ 
             let colorIdx = i%colors.length;
