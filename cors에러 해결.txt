@@ -1,0 +1,13 @@
+먼저 터미널을 연다. http-server가 없다면
+npm install http-server -g
+
+위 키워드로 http-server를 전역으로 설치해 준 다음
+npx http-server
+
+위 명령어로 http-server를 실행시켜 해당 폴더를 서버에 올립니다.
+http://127.0.0.1:8080
+
+위 URL로 접속해서 에러가 사라진 것을 확인합니다.
+http://localhost:8080/Winner.html 에서 확인 가능!
+
+[출처:https://rondeveloper.tistory.com/21]
